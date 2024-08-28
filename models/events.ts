@@ -2,8 +2,8 @@ export interface Event {
   title: string
   location: string
   date: string
-  start: Date
-  end: Date
+  start: string
+  end: string
   locked: boolean
 }
 

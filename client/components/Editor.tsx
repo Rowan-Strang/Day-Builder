@@ -1,8 +1,8 @@
 import { ChangeEvent, FormEvent, useState } from 'react'
-import { useAddEvent } from '../hooks/events.ts'
+// import { useAddEvent } from '../hooks/events.ts'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { addEvent } from '@/apis/events.ts'
-import { EventData } from 'models/events.ts'
+import { Event } from 'models/events.ts'
 
 function AddEvent() {
   // const { data, isPending, isError, error } = useAddEvent()
@@ -30,7 +30,7 @@ function AddEvent() {
   const queryClient = useQueryClient()
 
   const addMutation = useMutation({
-    mutationFn: async (event: EventData) => addEvent(event),
+    mutationFn: async (event: Event) => addEvent(event),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['events'] })
     },
@@ -52,23 +52,29 @@ function AddEvent() {
     }))
   }
 
+  const convertTo24HourFormat = (time: string): string => {
+    return `${time}:00`
+  }
+
   const onSubmit = async (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault()
+    // console.log('this is the start' + start)
 
     await addMutation.mutate({
       title: title,
       location,
       date,
-      start,
+      start: convertTo24HourFormat(start),
       end,
       locked,
     })
   }
   return (
     <>
+      <h2>Add an Event:</h2>
       <form className="form" onSubmit={onSubmit} aria-label="Add Event">
         <div>
-          <label htmlFor="title">Event: </label>
+          <label htmlFor="title">Title: </label>
           <input
             className="form__input"
             type="text"
