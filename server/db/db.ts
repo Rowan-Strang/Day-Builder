@@ -14,6 +14,7 @@ export function getAllEvents(date: string): Promise<EventData[]> {
       'events.end as end',
       'events.locked as locked',
     )
+    .orderBy('events.start', 'asc')
 }
 
 export function getEventById(id: number): Promise<EventData> {
