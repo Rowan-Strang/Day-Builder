@@ -8,8 +8,8 @@ export function up(knex) {
     table.string('title')
     table.string('location')
     table.string('date')
-    table.timestamp('start')
-    table.timestamp('end')
+    table.string('start')
+    table.string('end')
     table.boolean('locked')
   })
 }
