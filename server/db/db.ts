@@ -16,7 +16,8 @@ export function getAllEvents(date: string): Promise<EventData[]> {
     )
 }
 
-export function getEventByID(id: number): Promise<EventData> {
+export function getEventById(id: number): Promise<EventData> {
+  // console.log('whats going wrong')
   return db('events')
     .where({ id })
     .select(
@@ -29,10 +30,6 @@ export function getEventByID(id: number): Promise<EventData> {
     )
 }
 
-export function deleteEventById(id: number) {
-  return db('events').where({ id }).del()
-}
-
 export function addEvent(newEvent: Event) {
   return db('events').insert({
     title: newEvent.title,
@@ -42,4 +39,8 @@ export function addEvent(newEvent: Event) {
     end: newEvent.end,
     locked: newEvent.locked,
   })
+}
+
+export function deleteEventById(id: number) {
+  return db('events').where({ id }).del()
 }
