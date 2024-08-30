@@ -15,6 +15,20 @@ router.get('/all/:date', async (req, res) => {
     res.sendStatus(500)
   }
 })
+
+//GET'api/v1/events/last:date'
+router.get('/last/:date', async (req, res) => {
+  const date = String(req.params.date)
+  console.log('hi there last date')
+  try {
+    const result = await db.getLastEvent(date)
+    res.json(result)
+  } catch (error) {
+    console.error(`error getting events for date: ${date}) ${error}`)
+    res.sendStatus(500)
+  }
+})
+
 //GET'api/v1/events/:id'
 router.get('/:id', async (req, res) => {
   const id = Number(req.params.id)

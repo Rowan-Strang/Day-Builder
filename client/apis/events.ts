@@ -1,15 +1,20 @@
 import request from 'superagent'
-import { Event } from '../../models/events'
+import { Event, EventData } from '../../models/events'
 
 export async function getAllEvents(date: string) {
   const result = await request.get(`api/v1/events/all/${date}`)
-  console.log(result.body)
-  return result.body as Event[]
+  // console.log(result.body)
+  return result.body as EventData[]
+}
+export async function getLastEvent(date: string) {
+  const result = await request.get(`api/v1/events/last/${date}`)
+  // console.log(result.body)
+  return result.body as EventData
 }
 
 export async function getEventById(id: number) {
   const result = await request.get(`api/v1/events/${id}`)
-  console.log(result.body)
+  // console.log(result.body)
   return result.body as Event
 }
 

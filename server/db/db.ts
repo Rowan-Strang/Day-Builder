@@ -16,6 +16,21 @@ export function getAllEvents(date: string): Promise<EventData[]> {
     )
     .orderBy('events.start', 'asc')
 }
+export function getLastEvent(date: string): Promise<EventData> {
+  // console.log('hellop')
+  return db('events')
+    .where({ date })
+    .select(
+      // 'events.id as id',
+      // 'events.title as title',
+      // 'events.location as location',
+      'events.start as start',
+      'events.end as end',
+      // 'events.locked as locked',
+    )
+    .orderBy('events.start', 'desc')
+    .first()
+}
 
 export function getEventById(id: number): Promise<EventData> {
   // console.log('whats going wrong')

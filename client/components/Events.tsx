@@ -7,7 +7,7 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
+  // CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
@@ -23,6 +23,8 @@ const Events = () => {
     console.error(error.message)
     return <p>code failed successfully</p>
   }
+
+  console.log(data)
 
   function convertTo12Hour(time24: string) {
     const [initialHours, minutes] = time24.split(':').map(Number)
@@ -41,7 +43,7 @@ const Events = () => {
           <Editor />
           <br />
           {data.map((event) => (
-            <h2 key={event.title} className="w-full max-w-md">
+            <h2 key={(event.title, event.id)} className="w-full max-w-md">
               <Card className="w-full">
                 <CardHeader>
                   <CardTitle>{event.title}</CardTitle>

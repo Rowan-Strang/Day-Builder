@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   getAllEvents,
   getEventById,
+  getLastEvent,
   addEvent,
   deleteEventById,
 } from '../apis/events'
@@ -11,6 +12,12 @@ export function useEvents(date: string) {
   return useQuery({
     queryKey: ['events'],
     queryFn: async () => getAllEvents(date),
+  })
+}
+export function useLastEvent(date: string) {
+  return useQuery({
+    queryKey: ['events'],
+    queryFn: async () => getLastEvent(date),
   })
 }
 
