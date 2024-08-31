@@ -16,7 +16,7 @@ export function useEvents(date: string) {
 }
 export function useLastEvent(date: string) {
   return useQuery({
-    queryKey: ['events'],
+    queryKey: ['lastevent'],
     queryFn: async () => getLastEvent(date),
   })
 }

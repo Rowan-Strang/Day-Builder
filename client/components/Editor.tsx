@@ -1,4 +1,4 @@
-import { ChangeEvent, FormEvent, useState } from 'react'
+import { ChangeEvent, FormEvent, useEffect, useRef, useState } from 'react'
 // import { useAddEvent } from '../hooks/events.ts'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { addEvent, getLastEvent } from '@/apis/events.ts'
@@ -26,18 +26,36 @@ import { Label } from '@/components/ui/label'
 // } from '@/components/ui/select'
 
 function AddEvent() {
-  // const { data, isPending, isError, error } = useLastEvent('2024-12-28')
+  const queryClient = useQueryClient()
+  const titleInputRef = useRef<HTMLInputElement>(null)
+  const [titleError, setTitleError] = useState('')
+  const defaultFormValues = {
+    title: '',
+    location: '',
+    date: '2024-12-28',
+    start: '',
+    end: '',
+    locked: false,
+  }
 
-  // if (isPending) {
-  //   return <p>fetching your day...</p>
-  // }
+  const {
+    data: otherData,
+    isPending: otherPending,
+    isError: otherIsError,
+    error: otherError,
+  } = useLastEvent('2024-12-28')
 
-  // if (isError) {
-  //   console.error(error.message)
-  //   return <p>code failed successfully</p>
-  // }
+  function add30Minutes(time: string): string {
+    const now = new Date()
+    const [hours, minutes] = time.split(':').map(Number)
+    now.setHours(hours, minutes + 30)
+    const newHours = now.getHours().toString().padStart(2, '0')
+    const newMinutes = now.getMinutes().toString().padStart(2, '0')
+    return `${newHours}:${newMinutes}`
+  }
 
-  // console.log(data)
+  // Using useRef to create a reference to the form or a specific element
+  const formRef = useRef<HTMLDivElement>(null)
 
   const [formValues, setFormValues] = useState({
     title: '',
@@ -48,16 +66,51 @@ function AddEvent() {
     locked: false,
   })
 
-  const { title, location, date, start, end, locked } = formValues
+  useEffect(() => {
+    // Automatically scroll to the form when the component mounts or updates
+    if (formRef.current) {
+      formRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+    }
+  }, [otherData, formValues]) // You can include dependencies if you want this to happen based on certain conditions
 
-  const queryClient = useQueryClient()
+  useEffect(() => {
+    if (otherData) {
+      setFormValues((prev) => ({
+        ...prev,
+        start: add30Minutes(otherData.end || otherData.start),
+      }))
+    }
+  }, [otherData])
+
+  const { title, location, date, start, end, locked } = formValues
 
   const addMutation = useMutation({
     mutationFn: async (event: Event) => addEvent(event),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['events'] })
+      queryClient.invalidateQueries({ queryKey: ['lastevent'] })
+      setFormValues((prevValues) => ({
+        ...prevValues,
+        title: defaultFormValues.title,
+        locked: defaultFormValues.locked,
+      }))
+      // Set a timeout to ensure UI has time to settle
+      setTimeout(() => {
+        if (titleInputRef.current) {
+          titleInputRef.current.focus()
+        }
+      }, 300) // Adjust the timeout as necessary
     },
   })
+
+  if (otherPending) {
+    return <p>Loading Form</p>
+  }
+
+  if (otherIsError) {
+    console.error(otherError.message)
+    return <p>code failed successfully</p>
+  }
 
   const onChange = (evt: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = evt.currentTarget
@@ -74,13 +127,6 @@ function AddEvent() {
       [name]: checked,
     }))
   }
-  // const onCheckBoxChange = (evt: ChangeEvent<HTMLInputElement>) => {
-  //   const { name, checked } = evt.currentTarget
-  //   setFormValues((previous) => ({
-  //     ...previous,
-  //     [name]: checked,
-  //   }))
-  // }
 
   const convertTo24HourFormat = (time: string): string => {
     return `${time}:00`
@@ -88,9 +134,15 @@ function AddEvent() {
 
   const onSubmit = async (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault()
-    // console.log('this is the start' + start)
-    // console.log('Form submitted')
-
+    if (!formValues.title.trim()) {
+      setTitleError('Title is required.') // Set error message
+      if (titleInputRef.current) {
+        titleInputRef.current.focus() // Focus back to the title input
+      }
+      return // Stop the form submission if there's no title
+    }
+    // Clear the error message only when the form submission is successful
+    setTitleError('')
     await addMutation.mutate({
       title: title,
       location,
@@ -102,7 +154,7 @@ function AddEvent() {
   }
   return (
     <>
-      <Card className="w-[350px]">
+      <Card className="w-[640px] border-2 border-pink-200" ref={formRef}>
         <CardHeader>
           <CardTitle>Add Event</CardTitle>
         </CardHeader>
@@ -111,21 +163,27 @@ function AddEvent() {
             <div className="grid w-full items-center gap-4">
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="title">Title:</Label>
-                <Input
+                <input
                   id="title"
-                  placeholder="What's going down?"
-                  className="form__input"
                   type="text"
                   name="title"
-                  value={title}
-                  onChange={onChange}
+                  className="rounded-md border-2 border-gray-300 p-2 focus:border-blue-500"
+                  value={formValues.title}
+                  onChange={(e) =>
+                    setFormValues({ ...formValues, title: e.target.value })
+                  }
+                  ref={titleInputRef}
+                  // eslint-disable-next-line jsx-a11y/no-autofocus
+                  autoFocus
                 />
+                {titleError && <p className="text-red-500">{titleError}</p>}
                 <br />
                 <Label htmlFor="location">Address:</Label>
                 <Input
                   id="location"
                   type="text"
                   name="location"
+                  className="rounded-md border-2 border-gray-300 p-2 focus:border-blue-500"
                   value={location}
                   onChange={onChange}
                 />
@@ -134,7 +192,9 @@ function AddEvent() {
                 <Input
                   type="time"
                   name="start"
+                  className="rounded-md border-2 border-gray-300 p-2 focus:border-blue-500"
                   id="start"
+                  step="300"
                   value={start}
                   onChange={onChange}
                 />
@@ -160,159 +220,3 @@ function AddEvent() {
 }
 
 export default AddEvent
-
-{
-  /* this stuff here */
-
-  {
-    /* <br />
-                <div className="items-top flex space-x-2">
-                  <Checkbox
-                    id="locked"
-                    // type="checkbox"
-                    name="locked"
-                    checked={locked}
-                    onChange={onCheckBoxChange}
-                  />
-                </div>
-                <div className="grid gap-1.5 leading-none">
-                  <label
-                    htmlFor="locked"
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    Lock Start Time
-                  </label>
-                  <p className="text-sm text-muted-foreground">
-                    For fixed events that have no flexibility
-                  </p>
-                </div>
-                <br /> */
-  }
-}
-// {
-//   /* <div className="items-top flex space-x-2">
-//                   <Checkbox
-//                     id="locked"
-//                     // type="checkbox"
-//                     name="locked"
-//                     checked={locked}
-//                     onChange={onCheckBoxChange}
-//                   />
-//                   <div className="grid gap-1.5 leading-none">
-//                     <label
-//                       htmlFor="locked"
-//                       className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-//                     >
-//                       Lock Start Time
-//                     </label>
-//                     <p className="text-sm text-muted-foreground">
-//                       For fixed events that have no flexibility
-//                     </p>
-//                   </div> */
-// }
-{
-  /* </div> */
-}
-{
-  /* this stuff here */
-}
-{
-  /* <br />
-                <Label htmlFor="locked">Lock Start Time:</Label>
-                <Input
-                  type="checkbox"
-                  name="locked"
-                  id="locked"
-                  checked={locked}
-                  onChange={onCheckBoxChange}
-                /> */
-}
-
-{
-  /* <h2>Add an Event:</h2>
-      <form className="form" onSubmit={onSubmit} aria-label="Add Event">
-        <div>
-          <label htmlFor="title">Title: </label>
-          <input
-            className="form__input"
-            type="text"
-            name="title"
-            id="title"
-            value={title}
-            onChange={onChange}
-          />
-        </div>
-        <div>
-          <label htmlFor="location">Address: </label>
-          <input
-            type="text"
-            name="location"
-            id="location"
-            value={location}
-            onChange={onChange}
-          />
-        </div>
-        <div>
-          <label htmlFor="start">Starting: </label>
-          <input
-            type="time"
-            name="start"
-            id="start"
-            value={start}
-            onChange={onChange}
-          />
-        </div>
-        <div>
-          <label htmlFor="locked">Lock Start Time</label>
-          <input
-            type="checkbox"
-            name="locked"
-            id="locked"
-            checked={locked}
-            onChange={onCheckBoxChange}
-          />
-        </div>
-        <button type="submit" className="button-primary">
-          Add Event
-        </button>
-      </form> */
-}
-
-// export function CardWithForm() {
-//   return (
-//     <Card className="w-[350px]">
-//       <CardHeader>
-//         <CardTitle>Create project</CardTitle>
-//         <CardDescription>Deploy your new project in one-click.</CardDescription>
-//       </CardHeader>
-//       <CardContent>
-//         <form>
-//           <div className="grid w-full items-center gap-4">
-//             <div className="flex flex-col space-y-1.5">
-//               <Label htmlFor="name">Name</Label>
-//               <Input id="name" placeholder="Name of your project" />
-//             </div>
-//             <div className="flex flex-col space-y-1.5">
-//               <Label htmlFor="framework">Framework</Label>
-//               <Select>
-//                 <SelectTrigger id="framework">
-//                   <SelectValue placeholder="Select" />
-//                 </SelectTrigger>
-//                 <SelectContent position="popper">
-//                   <SelectItem value="next">Next.js</SelectItem>
-//                   <SelectItem value="sveltekit">SvelteKit</SelectItem>
-//                   <SelectItem value="astro">Astro</SelectItem>
-//                   <SelectItem value="nuxt">Nuxt.js</SelectItem>
-//                 </SelectContent>
-//               </Select>
-//             </div>
-//           </div>
-//         </form>
-//       </CardContent>
-//       <CardFooter className="flex justify-between">
-//         <Button variant="outline">Cancel</Button>
-//         <Button>Deploy</Button>
-//       </CardFooter>
-//     </Card>
-//   )
-// }
