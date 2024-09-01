@@ -217,7 +217,7 @@ function AddEvent() {
                 <br />
                 <Label htmlFor="location">Location:</Label>
                 <LoadScript
-                  googleMapsApiKey="AIzaSyCFndD6iipNflNqytaZOIABhhIWclMmS4w"
+                  googleMapsApiKey="API KEY HERE"
                   libraries={libraries} // Use the constant array here
                   onLoad={() =>
                     console.log('Google Maps script loaded successfully')
