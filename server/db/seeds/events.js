@@ -12,7 +12,7 @@ export async function seed(knex) {
       location: 'Location One',
       date: '2024-12-28',
       start: '10:00:00',
-      end: '10:45:00',
+      end: null,
       locked: false,
     },
     {
@@ -21,7 +21,7 @@ export async function seed(knex) {
       location: 'Location Two',
       date: '2024-12-28',
       start: '11:00:00',
-      end: '12:00:00',
+      end: null,
       locked: false,
     },
     {
@@ -30,7 +30,7 @@ export async function seed(knex) {
       location: 'Location One',
       date: '2024-12-28',
       start: '12:15:00',
-      end: '14:00:00',
+      end: null,
       locked: false,
     },
     {
@@ -39,7 +39,7 @@ export async function seed(knex) {
       location: 'Location Four',
       date: '2024-12-28',
       start: '14:30:00',
-      end: '15:00:00',
+      end: null,
       locked: true,
     },
   ])
