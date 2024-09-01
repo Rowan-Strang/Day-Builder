@@ -1,6 +1,7 @@
 // import { useState } from 'react'
 // import { Button } from '@/components/ui/button'
 import { useEvents } from '../hooks/events.ts'
+import CalendarButton from './CalendarButton.tsx'
 import Editor from './Editor.tsx'
 
 import {
@@ -62,6 +63,8 @@ const Events = () => {
         </div>
         <br />
         {data.length > 4 && <Editor />}
+        <br />
+        <CalendarButton />
         <br />
       </div>
     </>

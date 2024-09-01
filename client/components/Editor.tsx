@@ -1,31 +1,27 @@
 import { ChangeEvent, FormEvent, useEffect, useRef, useState } from 'react'
-// import { useAddEvent } from '../hooks/events.ts'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { addEvent, getLastEvent } from '@/apis/events.ts'
+import { addEvent } from '@/apis/events.ts'
 import { Event } from 'models/events.ts'
 import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
 import { useLastEvent } from '../hooks/events.ts'
+// import AddressSearch from './AddressSearch.tsx'
+// import React, { useRef } from 'react'
+import { StandaloneSearchBox, LoadScript } from '@react-google-maps/api'
 
 import {
   Card,
   CardContent,
-  // CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-// import {
-//   Select,
-//   SelectContent,
-//   SelectItem,
-//   SelectTrigger,
-//   SelectValue,
-// } from '@/components/ui/select'
+
+const libraries = ['places'] as any[]
 
 function AddEvent() {
+  const inputRef = useRef()
   const queryClient = useQueryClient()
   const titleInputRef = useRef<HTMLInputElement>(null)
   const [titleError, setTitleError] = useState('')
@@ -152,6 +148,37 @@ function AddEvent() {
       locked,
     })
   }
+
+  const handlePlaceChanged = () => {
+    const places = inputRef.current.getPlaces()
+    if (places.length === 0) {
+      return
+    }
+    const place = places[0]
+
+    // Assuming you want to save the formatted address and coordinates
+    const formattedAddress = place.formatted_address
+    const lat = place.geometry.location.lat()
+    const lng = place.geometry.location.lng()
+
+    // Update the form values
+    setFormValues((prev) => ({
+      ...prev,
+      location: formattedAddress, // or store `{ address: formattedAddress, lat, lng }` as an object if needed
+    }))
+
+    console.log(formValues)
+  }
+  const searchOptions = {
+    bounds: {
+      north: -34.36,
+      south: -47.35,
+      east: 178.84,
+      west: 166.28,
+    },
+    componentRestrictions: { country: 'NZ' },
+  }
+
   return (
     <>
       <Card className="w-[640px] border-2 border-pink-200" ref={formRef}>
@@ -178,7 +205,7 @@ function AddEvent() {
                 />
                 {titleError && <p className="text-red-500">{titleError}</p>}
                 <br />
-                <Label htmlFor="location">Address:</Label>
+                {/* <Label htmlFor="location">Address:</Label>
                 <Input
                   id="location"
                   type="text"
@@ -186,13 +213,45 @@ function AddEvent() {
                   className="rounded-md border-2 border-gray-300 p-2 focus:border-blue-500"
                   value={location}
                   onChange={onChange}
-                />
+                /> */}
+                <br />
+                <Label htmlFor="location">Location:</Label>
+                <LoadScript
+                  googleMapsApiKey="AIzaSyCFndD6iipNflNqytaZOIABhhIWclMmS4w"
+                  libraries={libraries} // Use the constant array here
+                  onLoad={() =>
+                    console.log('Google Maps script loaded successfully')
+                  }
+                  onError={(e) =>
+                    console.error('Error loading Google Maps script:', e)
+                  }
+                >
+                  <div className="w-full">
+                    <StandaloneSearchBox
+                      onLoad={(ref) => (inputRef.current = ref)}
+                      onPlacesChanged={handlePlaceChanged}
+                      options={searchOptions}
+                    >
+                      <input
+                        type="text"
+                        className="w-full rounded-md border-2 border-gray-300 p-2 focus:border-blue-500"
+                        placeholder="Enter Location"
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            e.preventDefault() // Prevent form submission
+                          }
+                        }}
+                      />
+                    </StandaloneSearchBox>
+                  </div>
+                </LoadScript>
                 <br />
                 <Label htmlFor="start">Starting:</Label>
                 <Input
                   type="time"
                   name="start"
-                  className="rounded-md border-2 border-gray-300 p-2 focus:border-blue-500"
+                  className="w-full rounded-md border-2 border-gray-300 p-2 focus:border-blue-500"
+                  placeholder="Enter Location"
                   id="start"
                   step="300"
                   value={start}

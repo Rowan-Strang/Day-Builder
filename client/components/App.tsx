@@ -1,7 +1,3 @@
-// import { useState } from 'react'
-// import { getGreeting } from '../apiClient.ts'
-// import { useQuery } from '@tanstack/react-query'
-// import { Button } from '@/components/ui/button'
 import Events from './Events.tsx'
 
 const App = () => {
@@ -10,7 +6,10 @@ const App = () => {
       <div className="grid min-h-[100svh] grid-rows-[auto_1fr_auto]">
         <div className="row-start-2 row-end-3 flex flex-col items-center gap-4">
           <br />
-          <h1>Welcome to Day Builder!</h1>
+          <br />
+          <h1 className="text-4xl font-bold tracking-wide text-indigo-600">
+            Welcome to Day Builder
+          </h1>
           <Events />
         </div>
       </div>
@@ -20,23 +19,58 @@ const App = () => {
 
 export default App
 
-// const [count, setCount] = useState(0)
+// import Events from './Events.tsx'
 
-// const {
-//   data: greeting,
-//   isError,
-//   isPending,
-// } = useQuery({ queryKey: ['greeting', count], queryFn: getGreeting })
+// const App = () => {
+//   return (
+//     <>
+//       <div className="grid min-h-[100svh] grid-rows-[auto_1fr_auto]">
+//         <div className="row-start-2 row-end-3 flex flex-col items-center gap-4">
+//           <br />
+//           <br />
+//           <h1 className="text-4xl font-bold tracking-wide text-indigo-600">
+//             Welcome to Day Builder
+//           </h1>
+//           <Events />
+//         </div>
+//       </div>
+//     </>
+//   )
+// }
 
-// if (isPending) return <p>Loading...</p>
+// export default App
 
-{
-  /* {count}
-        <h1 className="text-3xl font-bold underline">{greeting}</h1>
-        {isError && (
-          <p style={{ color: 'red' }}>
-            There was an error retrieving the greeting.
-          </p>
-        )}
-        <Button onClick={() => setCount(count + 1)}>Click</Button> */
-}
+// import React, { useRef } from 'react'
+// import { StandaloneSearchBox, LoadScript } from '@react-google-maps/api'
+
+// const App = () => {
+//   const inputRef = useRef()
+
+//   const handlePlaceChanged = () => {
+//     const [place] = inputRef.current.getPlaces()
+//     if (place) {
+//       console.log(place.formatted_address)
+//       console.log(place.geometry.location.lat())
+//       console.log(place.geometry.location.lng())
+//     }
+//   }
+//   return (
+//     <LoadScript
+//       googleMapsApiKey="AIzaSyCFndD6iipNflNqytaZOIABhhIWclMmS4w"
+//       libraries={['places']}
+//     >
+//       <StandaloneSearchBox
+//         onLoad={(ref) => (inputRef.current = ref)}
+//         onPlacesChanged={handlePlaceChanged}
+//       >
+//         <input
+//           type="text"
+//           className="form-control"
+//           placeholder="Enter Location"
+//         />
+//       </StandaloneSearchBox>
+//     </LoadScript>
+//   )
+// }
+
+// export default App
