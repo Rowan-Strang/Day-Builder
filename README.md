@@ -145,3 +145,10 @@ Additional components should be placed in `client/components`.
 </details>
 
 ---
+
+### 4. Viewing data in the database
+
+- Use `npm run knex migrate:latest` to apply the changes to the database
+- Run `npm run knex seed:run` to add the new data to the database
+
+---
