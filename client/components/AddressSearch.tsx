@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { Label } from '@/components/ui/label'
 
 interface AddressSearchProps {
-  onAddressSelect: (address: string) => void // Define a prop to handle address selection
+  onAddressSelect: (address: string) => void
 }
 
 const apiKey = import.meta.env.VITE_GOOGLE_API
@@ -10,8 +10,19 @@ const apiKey = import.meta.env.VITE_GOOGLE_API
 function AddressSearch({ onAddressSelect }: AddressSearchProps) {
   useEffect(() => {
     const initAutocomplete = () => {
-      const input = document.getElementById('autocomplete')
-      const autocomplete = new window.google.maps.places.Autocomplete(input, {
+      const element = document.getElementById('autocomplete')
+
+      if (!element) {
+        console.error('autocomplete input element not found')
+        return
+      }
+
+      if (!(element instanceof HTMLInputElement)) {
+        console.error('Element is not an HTMLInputElement')
+        return
+      }
+
+      const autocomplete = new window.google.maps.places.Autocomplete(element, {
         types: ['geocode'],
         componentRestrictions: { country: 'NZ' },
       })
