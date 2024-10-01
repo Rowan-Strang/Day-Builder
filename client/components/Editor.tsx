@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import AddressSearch from './AddressSearch.tsx'
 // import {
 //   Select,
 //   SelectContent,
@@ -128,6 +129,14 @@ function AddEvent() {
     }))
   }
 
+  const onAddressSelect = (address: string) => {
+    console.log(address)
+    setFormValues((prev) => ({
+      ...prev,
+      location: address, // Update the location field with the selected address
+    }))
+  }
+
   const convertTo24HourFormat = (time: string): string => {
     return `${time}:00`
   }
@@ -178,7 +187,9 @@ function AddEvent() {
                 />
                 {titleError && <p className="text-red-500">{titleError}</p>}
                 <br />
-                <Label htmlFor="location">Address:</Label>
+                <AddressSearch onAddressSelect={onAddressSelect} />
+                <br />
+                {/* <Label htmlFor="location">Address:</Label>
                 <Input
                   id="location"
                   type="text"
@@ -187,7 +198,7 @@ function AddEvent() {
                   value={location}
                   onChange={onChange}
                 />
-                <br />
+                <br /> */}
                 <Label htmlFor="start">Starting:</Label>
                 <Input
                   type="time"

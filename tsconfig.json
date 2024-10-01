@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "types": ["vite/client"],
+    "types": ["vite/client", "google.maps"],
     "target": "es2020", 
     "jsx": "react-jsx",
     "module": "ES2020",
