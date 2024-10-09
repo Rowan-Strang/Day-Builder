@@ -55,7 +55,6 @@ function AddEvent() {
     return `${newHours}:${newMinutes}`
   }
 
-  // Using useRef to create a reference to the form or a specific element
   const formRef = useRef<HTMLDivElement>(null)
 
   const [formValues, setFormValues] = useState({
@@ -68,11 +67,10 @@ function AddEvent() {
   })
 
   useEffect(() => {
-    // Automatically scroll to the form when the component mounts or updates
     if (formRef.current) {
       formRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
     }
-  }, [otherData, formValues]) // You can include dependencies if you want this to happen based on certain conditions
+  }, [otherData, formValues])
 
   useEffect(() => {
     if (otherData) {
@@ -95,12 +93,12 @@ function AddEvent() {
         title: defaultFormValues.title,
         locked: defaultFormValues.locked,
       }))
-      // Set a timeout to ensure UI has time to settle
+
       setTimeout(() => {
         if (titleInputRef.current) {
           titleInputRef.current.focus()
         }
-      }, 300) // Adjust the timeout as necessary
+      }, 300)
     },
   })
 
@@ -133,7 +131,7 @@ function AddEvent() {
     console.log(address)
     setFormValues((prev) => ({
       ...prev,
-      location: address, // Update the location field with the selected address
+      location: address,
     }))
   }
 
@@ -144,13 +142,13 @@ function AddEvent() {
   const onSubmit = async (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault()
     if (!formValues.title.trim()) {
-      setTitleError('Title is required.') // Set error message
+      setTitleError('Title is required.')
       if (titleInputRef.current) {
-        titleInputRef.current.focus() // Focus back to the title input
+        titleInputRef.current.focus()
       }
-      return // Stop the form submission if there's no title
+      return
     }
-    // Clear the error message only when the form submission is successful
+
     setTitleError('')
     await addMutation.mutate({
       title: title,
@@ -189,16 +187,6 @@ function AddEvent() {
                 <br />
                 <AddressSearch onAddressSelect={onAddressSelect} />
                 <br />
-                {/* <Label htmlFor="location">Address:</Label>
-                <Input
-                  id="location"
-                  type="text"
-                  name="location"
-                  className="rounded-md border-2 border-gray-300 p-2 focus:border-blue-500"
-                  value={location}
-                  onChange={onChange}
-                />
-                <br /> */}
                 <Label htmlFor="start">Starting:</Label>
                 <Input
                   type="time"

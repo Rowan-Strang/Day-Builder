@@ -24,8 +24,6 @@ const Events = () => {
     return <p>code failed successfully</p>
   }
 
-  // console.log(data)
-
   function convertTo12Hour(time24: string) {
     const [initialHours, minutes] = time24.split(':').map(Number)
     const period = initialHours >= 12 ? 'PM' : 'AM'
@@ -37,32 +35,32 @@ const Events = () => {
 
   return (
     <>
-      <div className="grid min-h-[100svh] grid-rows-[auto_1fr_auto]">
-        <div className="row-start-2 row-end-3 flex flex-col items-center gap-4">
-          <br />
-          {data.length <= 4 && <Editor />}
-          <br />
-          {data.map((event) => (
-            <h2 key={(event.title, event.id)} className="w-full max-w-md">
-              <Card className="flex w-full flex-row items-center justify-between">
-                <CardContent className="flex items-center">
-                  <p>
-                    {event.locked ? '🔒' : ''}
-                    {convertTo12Hour(event.start)}
-                  </p>
-                </CardContent>
-                <CardHeader className="flex flex-col text-right">
-                  <CardTitle>{event.title}</CardTitle>
-                  <CardDescription>{event.location}</CardDescription>
-                </CardHeader>
-              </Card>
-            </h2>
-          ))}
-          <br />
+      <div className="grid min-h-[100svh] grid-rows-[1fr_auto]">
+        <div className="row-start-1 row-end-2 overflow-y-auto">
+          <div className="flex flex-col items-center gap-4">
+            <br />
+            {data.map((event) => (
+              <h2 key={(event.title, event.id)} className="w-full max-w-md">
+                <Card className="flex w-full flex-row items-center justify-between">
+                  <CardContent className="flex items-center">
+                    <p>
+                      {event.locked ? '🔒' : ''}
+                      {convertTo12Hour(event.start)}
+                    </p>
+                  </CardContent>
+                  <CardHeader className="flex flex-col text-right">
+                    <CardTitle>{event.title}</CardTitle>
+                    <CardDescription>{event.location}</CardDescription>
+                  </CardHeader>
+                </Card>
+              </h2>
+            ))}
+            <br />
+          </div>
         </div>
-        <br />
-        {data.length > 4 && <Editor />}
-        <br />
+        <div className="sticky bottom-0 row-start-2 row-end-3 pb-4">
+          <Editor />
+        </div>
       </div>
     </>
   )
