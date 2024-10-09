@@ -24,8 +24,6 @@ const Events = () => {
     return <p>code failed successfully</p>
   }
 
-  // console.log(data)
-
   function convertTo12Hour(time24: string) {
     const [initialHours, minutes] = time24.split(':').map(Number)
     const period = initialHours >= 12 ? 'PM' : 'AM'
@@ -39,7 +37,6 @@ const Events = () => {
     <>
       <div className="grid min-h-[100svh] grid-rows-[1fr_auto]">
         <div className="row-start-1 row-end-2 overflow-y-auto">
-          {/* This is where your scrollable content will go */}
           <div className="flex flex-col items-center gap-4">
             <br />
             {data.map((event) => (
@@ -61,7 +58,7 @@ const Events = () => {
             <br />
           </div>
         </div>
-        <div className="sticky bottom-0 row-start-2 row-end-3">
+        <div className="sticky bottom-0 row-start-2 row-end-3 pb-4">
           <Editor />
         </div>
       </div>
