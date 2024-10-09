@@ -40,8 +40,6 @@ const Events = () => {
       <div className="grid min-h-[100svh] grid-rows-[auto_1fr_auto]">
         <div className="row-start-2 row-end-3 flex flex-col items-center gap-4">
           <br />
-          {data.length <= 4 && <Editor />}
-          <br />
           {data.map((event) => (
             <h2 key={(event.title, event.id)} className="w-full max-w-md">
               <Card className="flex w-full flex-row items-center justify-between">
@@ -61,7 +59,7 @@ const Events = () => {
           <br />
         </div>
         <br />
-        {data.length > 4 && <Editor />}
+        <Editor />
         <br />
       </div>
     </>
